@@ -1,19 +1,39 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Issue Details | CollegeCare</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
     <style>
-        .priority-high { background-color: #fecaca; }
-        .priority-medium { background-color: #fed7aa; }
-        .priority-low { background-color: #bbf7d0; }
-        .status-pending { background-color: #bfdbfe; }
-        .status-accepted { background-color: #bbf7d0; }
-        .status-rejected { background-color: #fecaca; }
+        .priority-high {
+            background-color: #fecaca;
+        }
+
+        .priority-medium {
+            background-color: #fed7aa;
+        }
+
+        .priority-low {
+            background-color: #bbf7d0;
+        }
+
+        .status-pending {
+            background-color: #bfdbfe;
+        }
+
+        .status-accepted {
+            background-color: #bbf7d0;
+        }
+
+        .status-rejected {
+            background-color: #fecaca;
+        }
     </style>
 </head>
+
 <body class="flex justify-center items-center min-h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-300 w-full max-w-4xl">
         <!-- Header with back button -->
@@ -32,21 +52,24 @@
 
         <!-- Action Buttons (for HOD) -->
         <div id="action-buttons" class="flex justify-between mt-8 hidden">
-            <button id="reject-btn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
+            <button id="reject-btn"
+                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
                 <i class="fas fa-times-circle mr-2"></i> Reject
             </button>
-            <button id="accept-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
+            <button id="accept-btn"
+                class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
                 <i class="fas fa-check-circle mr-2"></i> Accept
             </button>
-            <button id="forward-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
+            <button id="forward-btn"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
                 <i class="fas fa-share mr-2"></i> Forward to Head Admin
             </button>
         </div>
 
         <!-- Comment Input (shown when taking action) -->
         <div id="comment-section" class="mt-6 hidden">
-            <textarea id="comment-text" class="w-full border border-gray-300 rounded-lg p-4" rows="3" 
-                     placeholder="Add your comments here..."></textarea>
+            <textarea id="comment-text" class="w-full border border-gray-300 rounded-lg p-4" rows="3"
+                placeholder="Add your comments here..."></textarea>
             <div class="flex justify-end mt-2">
                 <button id="cancel-comment" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg mr-2">
                     Cancel
@@ -66,27 +89,27 @@
             // Get issue ID from URL
             const urlParams = new URLSearchParams(window.location.search);
             const issueId = parseInt(urlParams.get('id'));
-            
+
             // Get all issues from localStorage
             const issues = JSON.parse(localStorage.getItem('collegeIssues')) || [];
             const issue = issues.find(item => item.id === issueId);
-            
+
             const issueDetails = document.getElementById('issue-details');
             const actionButtons = document.getElementById('action-buttons');
-            
+
             if (issue) {
                 // Format priority display
                 let priorityDisplay = '';
                 let priorityColor = 'bg-blue-500';
                 if (issue.priority === 'high') priorityColor = 'bg-red-500';
                 if (issue.priority === 'low') priorityColor = 'bg-green-500';
-                
+
                 // Format status display
                 let statusDisplay = '';
                 let statusColor = 'bg-gray-200';
                 if (issue.status === 'accepted') statusColor = 'bg-green-100 text-green-800';
                 if (issue.status === 'rejected') statusColor = 'bg-red-100 text-red-800';
-                
+
                 // Render issue details
                 issueDetails.innerHTML = `
                     <div class="grid grid-cols-2 gap-8 mb-8">
@@ -125,9 +148,9 @@
                         <div>
                             <h2 class="text-2xl font-bold mb-4">Proof</h2>
                             <div class="border border-gray-300 rounded-lg p-4 h-48 flex items-center justify-center bg-gray-100">
-                                ${issue.image ? 
-                                    `<img src="${issue.image}" alt="Issue proof" class="max-h-full max-w-full">` : 
-                                    '<p class="text-gray-500">No image provided</p>'}
+                                ${issue.image ?
+                        `<img src="${issue.image}" alt="Issue proof" class="max-h-full max-w-full">` :
+                        '<p class="text-gray-500">No image provided</p>'}
                             </div>
                         </div>
                     </div>
@@ -148,7 +171,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 // Show action buttons if status is pending
                 if (!issue.status || issue.status === 'pending') {
                     actionButtons.classList.remove('hidden');
@@ -163,7 +186,7 @@
                 `;
             }
         });
-        
+
         function setupActionButtons(issueId) {
             const rejectBtn = document.getElementById('reject-btn');
             const acceptBtn = document.getElementById('accept-btn');
@@ -171,9 +194,9 @@
             const commentSection = document.getElementById('comment-section');
             const cancelComment = document.getElementById('cancel-comment');
             const submitComment = document.getElementById('submit-comment');
-            
+
             let currentAction = '';
-            
+
             // Show comment section for action
             [rejectBtn, acceptBtn, forwardBtn].forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -183,14 +206,14 @@
                     document.getElementById('comment-text').focus();
                 });
             });
-            
+
             // Cancel comment
             cancelComment.addEventListener('click', () => {
                 commentSection.classList.add('hidden');
                 actionButtons.classList.remove('hidden');
                 document.getElementById('comment-text').value = '';
             });
-            
+
             // Submit comment/action
             submitComment.addEventListener('click', () => {
                 const comment = document.getElementById('comment-text').value.trim();
@@ -198,11 +221,11 @@
                     alert('Please enter a comment');
                     return;
                 }
-                
+
                 // Update issue in localStorage
                 const issues = JSON.parse(localStorage.getItem('collegeIssues')) || [];
                 const issueIndex = issues.findIndex(item => item.id === issueId);
-                
+
                 if (issueIndex !== -1) {
                     // Update status based on action
                     if (currentAction === 'reject') {
@@ -212,7 +235,7 @@
                     } else if (currentAction === 'forward') {
                         issues[issueIndex].status = 'forwarded to head admin';
                     }
-                    
+
                     // Add comment if provided
                     if (comment) {
                         if (!issues[issueIndex].comments) {
@@ -224,10 +247,10 @@
                             timestamp: new Date().toISOString()
                         });
                     }
-                    
+
                     // Save back to localStorage
                     localStorage.setItem('collegeIssues', JSON.stringify(issues));
-                    
+
                     // Show confirmation and redirect
                     alert(`Issue has been ${currentAction}ed successfully!`);
                     window.location.href = 'hod.html';
@@ -236,4 +259,5 @@
         }
     </script>
 </body>
+
 </html>

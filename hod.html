@@ -1,7 +1,10 @@
 <html>
+
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
 </head>
+
 <body class="flex justify-center items-center min-h-screen bg-gray-100">
     <div class="w-full max-w-6xl bg-white shadow-lg rounded-lg p-6">
         <h1 class="text-center text-3xl font-bold mb-6">HOD DASHBOARD</h1>
@@ -159,19 +162,19 @@
             // Get issues from localStorage
             const issues = JSON.parse(localStorage.getItem('collegeIssues')) || [];
             const tbody = document.querySelector('tbody');
-            
+
             // Clear existing rows
             tbody.innerHTML = '';
-            
+
             // Add each issue to the table
             issues.forEach((issue, index) => {
                 const row = document.createElement('tr');
-                
+
                 // Set priority color
                 let priorityColor = 'bg-blue-500';
                 if (issue.priority === 'high') priorityColor = 'bg-red-500';
                 if (issue.priority === 'low') priorityColor = 'bg-green-500';
-                
+
                 row.innerHTML = `
                     <td class="border px-4 py-2 text-center">${index + 1}</td>
                     <td class="border px-4 py-2 text-center">${issue.issue}</td>
@@ -185,10 +188,11 @@
                         <a href="viewboard.html?id=${issue.id}" class="text-blue-500 underline">View</a>
                     </td>
                 `;
-                
+
                 tbody.appendChild(row);
             });
         });
-        </script>
+    </script>
 </body>
+
 </html>

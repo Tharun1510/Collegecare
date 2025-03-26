@@ -404,34 +404,82 @@
                 return;
             }
 
-            // Here you would typically send the login data to a server
-            console.log('Login attempted with:', { email, password });
-            alert('Login successful! (This is a demo)');
-        });
+            // Get registered users
+            const registeredUsers = JSON.parse(localStorage.getItem('collegeCareUsers')) || [];
 
+            // Simple "hashing" to match what we stored
+            const hashedPassword = btoa(encodeURIComponent(password));
+
+            // Find the user
+            const user = registeredUsers.find(u =>
+                u.email === email &&
+                u.password === hashedPassword
+            );
+
+            if (user) {
+                // Create session
+                localStorage.setItem('currentUser', JSON.stringify({
+                    email: user.email,
+                    role: user.role,
+                    loggedInAt: new Date().toISOString()
+                }));
+
+                redirectBasedOnRole(user.role);
+            } else {
+                alert('Invalid email or password');
+            }
+        });
         document.getElementById('registrationForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            
+
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             const role = document.getElementById('userRole').value;
 
-            // Here you would typically send the registration data to a server
-            console.log('Registration data:', { name, email, password, role });
-            
-            // Simulate successful registration
-            alert('Registration successful! Redirecting...');
-            
-            // Redirect based on user role
+            // Get existing users or initialize empty array
+            const registeredUsers = JSON.parse(localStorage.getItem('collegeCareUsers')) || [];
+
+            // Check if email already exists
+            if (registeredUsers.some(user => user.email === email)) {
+                alert('Email already registered');
+                return;
+            }
+
+            // Create a simple "hashed" password (not secure, but better than plain text)
+            const hashedPassword = btoa(encodeURIComponent(password));
+
+            // Add new user
+            registeredUsers.push({
+                id: Date.now(), // Unique ID
+                name,
+                email,
+                password: hashedPassword, // Store the "hashed" version
+                role,
+                registeredAt: new Date().toISOString()
+            });
+
+            // Save back to localStorage
+            localStorage.setItem('collegeCareUsers', JSON.stringify(registeredUsers));
+
+            // Also create a "session" to mark user as logged in
+            localStorage.setItem('currentUser', JSON.stringify({
+                email,
+                role,
+                loggedInAt: new Date().toISOString()
+            }));
+
+            // Redirect based on role
+            redirectBasedOnRole(role);
+        });
+
+        function redirectBasedOnRole(role) {
             if (role === 'Student' || role === 'Staff') {
-                // Redirect to regular user dashboard
                 window.location.href = 'index.html';
             } else if (role === 'HOD' || role === 'HeadAdmin') {
-                // Redirect to admin dashboard
                 window.location.href = 'hod.html';
             }
-        });
+        }
     </script>
 </body>
 
