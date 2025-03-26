@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a New Issue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        .selected { background-color: #2563eb; color: white; }
+        .hover\:bg-light-blue:hover { background-color: #dbeafe; }
+        .btn { transition: all 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+        <h1 class="text-center text-2xl font-bold mb-6 text-gray-800">📢 Report a New Issue</h1>
+
+        <!-- Issue Selection -->
+        <div class="mb-5">
+            <h2 class="text-lg font-semibold mb-3 text-gray-700">🔍 What's the issue?</h2>
+            <div class="flex flex-wrap gap-2">
+                <button class="issue-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-issue="Breakage">Breakage</button>
+                <button class="issue-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-issue="Maintenance">Maintenance</button>
+                <button class="issue-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-issue="Unavailability">Unavailability</button>
+                <button class="issue-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-issue="Other">Other</button>
+            </div>
+            <input type="text" id="specify-issue" placeholder="Please specify the issue" class="w-full border border-gray-300 rounded-md px-4 py-2 mt-2 hidden">
+        </div>
+
+        <!-- Location Selection -->
+        <div class="mb-5">
+            <h2 class="text-lg font-semibold mb-3 text-gray-700">📍 Where?</h2>
+            <div class="flex flex-wrap gap-2">
+                <button class="where-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-where="Classroom">Classroom</button>
+                <button class="where-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-where="Lab">Lab</button>
+                <button class="where-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-where="Restroom">Restroom</button>
+                <button class="where-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-where="Canteen">Canteen</button>
+                <button class="where-btn btn border border-gray-300 rounded-full px-4 py-2 hover:bg-light-blue" data-where="Other">Other</button>
+            </div>
+            <input type="text" id="where-issue" placeholder="Specify the location" class="w-full border border-gray-300 rounded-md px-4 py-2 mt-2 hidden">
+        </div>
+
+        <!-- Description -->
+        <div class="mb-5">
+            <h2 class="text-lg font-semibold mb-3 text-gray-700">📝 Describe</h2>
+            <textarea id="describe-issue" placeholder="Describe the issue in detail" class="w-full border border-gray-300 rounded-md px-4 py-2 h-24"></textarea>
+        </div>
+
+        <!-- File Upload -->
+        <div class="mb-5">
+            <h2 class="text-lg font-semibold mb-3 text-gray-700">📸 Upload Proof</h2>
+            <div class="border border-gray-300 rounded-lg p-4 text-center">
+                <label for="upload-file" id="upload-label" class="cursor-pointer block">
+                    <div class="border border-gray-400 rounded-md px-4 py-2 inline-block bg-gray-50 hover:bg-gray-100">📤 Upload File</div>
+                </label>
+                <input type="file" id="upload-file" class="hidden" accept="image/*">
+                <div id="file-info" class="mt-2 hidden">
+                    <span id="file-name" class="text-blue-600 underline cursor-pointer"></span>
+                    <button id="remove-file" class="ml-2 text-red-500">❌ Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button id="submit-btn" class="bg-blue-600 text-white font-semibold rounded-full px-6 py-3 hover:bg-blue-700 transition">🚀 Submit</button>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.issue-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.issue-btn').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                document.getElementById('specify-issue').classList.toggle('hidden', button.dataset.issue !== 'Other');
+            });
+        });
+
+        document.querySelectorAll('.where-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.where-btn').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                document.getElementById('where-issue').classList.toggle('hidden', button.dataset.where !== 'Other');
+            });
+        });
+
+        document.getElementById('upload-file').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('file-name').textContent = file.name;
+                document.getElementById('file-info').classList.remove('hidden');
+                document.getElementById('upload-label').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('file-name').addEventListener('click', () => {
+            const fileInput = document.getElementById('upload-file');
+            if (fileInput.files.length > 0) {
+                const fileURL = URL.createObjectURL(fileInput.files[0]);
+                window.open(fileURL, '_blank');
+            }
+        });
+
+        document.getElementById('remove-file').addEventListener('click', () => {
+            document.getElementById('upload-file').value = '';
+            document.getElementById('file-info').classList.add('hidden');
+            document.getElementById('upload-label').classList.remove('hidden');
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Get form values
+    const issueType = document.querySelector('.issue-btn.selected')?.dataset.issue;
+    const location = document.querySelector('.where-btn.selected')?.dataset.where;
+    const description = document.getElementById('describe-issue').value;
+    
+    if (!issueType || !location || !description) {
+        alert('Please fill all fields');
+        return;
+    }
+
+    // Create issue object
+    const newIssue = {
+        id: Date.now(), // Unique ID
+        issue: issueType === 'Other' 
+               ? document.getElementById('specify-issue').value 
+               : issueType,
+        location: location === 'Other'
+                 ? document.getElementById('where-issue').value
+                 : location,
+        description: description,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        priority: 'medium', // Default
+        status: 'Pending'
+    };
+
+    // Get existing issues or initialize empty array
+    const existingIssues = JSON.parse(localStorage.getItem('collegeIssues')) || [];
+    
+    // Add new issue
+    existingIssues.unshift(newIssue);
+    
+    // Save back to localStorage
+    localStorage.setItem('collegeIssues', JSON.stringify(existingIssues));
+    
+    // Redirect to confirmation
+    window.location.href = 'submitted.html';
+});
+    </script>
+</body>
+</html>

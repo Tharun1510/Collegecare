@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CollegeCare - Manage Your College Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Header Styles */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+            color: #3498db;
+        }
+
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-menu i {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .profile-menu i:hover {
+            color: #3498db;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .profile-menu:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Content Styles */
+        .content {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .content h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .content p {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Styles */
+        .login-form {
+            background-color: #f9f9f9;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .login-form h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .login-form input,
+        .login-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            height: 50px;
+        }
+
+        .button-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: medium;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-group button:hover {
+            background-color: #2980b9;
+        }
+
+        .option-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .option-buttons button {
+            flex: 1;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .option-buttons button:hover {
+            background-color: #2980b9;
+        }
+
+        .back-button {
+            background-color: #95a5a6 !important;
+            margin-bottom: 1rem;
+            height: 30px;
+            width: 100%;
+        }
+
+        .back-button:hover {
+            background-color: #7f8c8d !important;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .main-header {
+                padding: 1rem;
+            }
+
+            .content {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>CollegeCare</span>
+        </div>
+        <div class="profile-menu">
+            <i class="fas fa-user-circle" id="profileIcon" aria-label="Profile Menu"></i>
+            <div class="dropdown-content" id="dropdownMenu">
+                <a href="#login">Login</a>
+                <a href="#signup">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="content">
+        <h1>Welcome to CollegeCare</h1>
+        <p>Manage your college profile with ease. Register or log in to access your dashboard.</p>
+
+        <!-- Login Form -->
+        <section class="login-form" id="loginSection">
+            <h2>Login</h2>
+            <form id="loginForm" method="post" autocomplete="off">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required
+                    aria-required="true">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required
+                    aria-required="true">
+                <div class="button-group">
+                    <button type="submit">Login</button>
+                    <button type="button" id="registerButton">Register</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Registration Step 1: User Type Selection -->
+        <section class="login-form hidden" id="userTypeSection">
+            <h2>Register As</h2>
+            <div class="option-buttons">
+                <button type="button" id="userButton">User</button>
+                <button type="button" id="adminButton">Admin</button>
+            </div>
+            <button type="button" class="back-button" id="backToLoginFromType">Back to Login</button>
+        </section>
+
+        <!-- Registration Step 2a: User Role Selection -->
+        <section class="login-form hidden" id="userRoleSection">
+            <h2>User Type</h2>
+            <div class="option-buttons">
+                <button type="button" id="studentButton">Student</button>
+                <button type="button" id="staffButton">Staff</button>
+            </div>
+            <button type="button" class="back-button" id="backToUserType">Back</button>
+        </section>
+
+        <!-- Registration Step 2b: Admin Role Selection -->
+        <section class="login-form hidden" id="adminRoleSection">
+            <h2>Admin Type</h2>
+            <div class="option-buttons">
+                <button type="button" id="hodButton">HOD</button>
+                <button type="button" id="headAdminButton">Head Admin</button>
+            </div>
+            <button type="button" class="back-button" id="backToUserTypeFromAdmin">Back</button>
+        </section>
+
+        <!-- Registration Step 3: Registration Form -->
+        <section class="login-form hidden" id="registrationSection">
+            <h2>Complete Registration</h2>
+            <form id="registrationForm" method="post" autocomplete="off">
+                <input type="hidden" id="userRole" name="userRole">
+                <label for="regName">Full Name:</label>
+                <input type="text" id="regName" name="regName" placeholder="Enter your full name" required
+                    aria-required="true">
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" name="regEmail" placeholder="Enter your email" required
+                    aria-required="true">
+                <label for="regPassword">Password:</label>
+                <input type="password" id="regPassword" name="regPassword" placeholder="Create a password" required
+                    aria-required="true">
+                <div class="button-group">
+                    <button type="submit">Register</button>
+                    <button type="button" id="backToRoleSelection">Back</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const userTypeSection = document.getElementById('userTypeSection');
+        const userRoleSection = document.getElementById('userRoleSection');
+        const adminRoleSection = document.getElementById('adminRoleSection');
+        const registrationSection = document.getElementById('registrationSection');
+        const userRoleInput = document.getElementById('userRole');
+
+        // Buttons
+        const registerButton = document.getElementById('registerButton');
+        const userButton = document.getElementById('userButton');
+        const adminButton = document.getElementById('adminButton');
+        const studentButton = document.getElementById('studentButton');
+        const staffButton = document.getElementById('staffButton');
+        const hodButton = document.getElementById('hodButton');
+        const headAdminButton = document.getElementById('headAdminButton');
+
+        // Back buttons
+        const backToLoginFromType = document.getElementById('backToLoginFromType');
+        const backToUserType = document.getElementById('backToUserType');
+        const backToUserTypeFromAdmin = document.getElementById('backToUserTypeFromAdmin');
+        const backToRoleSelection = document.getElementById('backToRoleSelection');
+
+        // Show registration type selection (User/Admin)
+        registerButton.addEventListener('click', () => {
+            loginSection.classList.add('hidden');
+            userTypeSection.classList.remove('hidden');
+        });
+
+        // User selected (show Student/Staff options)
+        userButton.addEventListener('click', () => {
+            userTypeSection.classList.add('hidden');
+            userRoleSection.classList.remove('hidden');
+        });
+
+        // Admin selected (show HOD/HeadAdmin options)
+        adminButton.addEventListener('click', () => {
+            userTypeSection.classList.add('hidden');
+            adminRoleSection.classList.remove('hidden');
+        });
+
+        // Student selected
+        studentButton.addEventListener('click', () => {
+            userRoleInput.value = 'Student';
+            userRoleSection.classList.add('hidden');
+            registrationSection.classList.remove('hidden');
+        });
+
+        // Staff selected
+        staffButton.addEventListener('click', () => {
+            userRoleInput.value = 'Staff';
+            userRoleSection.classList.add('hidden');
+            registrationSection.classList.remove('hidden');
+        });
+
+        // HOD selected
+        hodButton.addEventListener('click', () => {
+            userRoleInput.value = 'HOD';
+            adminRoleSection.classList.add('hidden');
+            registrationSection.classList.remove('hidden');
+        });
+
+        // Head Admin selected
+        headAdminButton.addEventListener('click', () => {
+            userRoleInput.value = 'HeadAdmin';
+            adminRoleSection.classList.add('hidden');
+            registrationSection.classList.remove('hidden');
+        });
+
+        // Back button handlers
+        backToLoginFromType.addEventListener('click', () => {
+            userTypeSection.classList.add('hidden');
+            loginSection.classList.remove('hidden');
+        });
+
+        backToUserType.addEventListener('click', () => {
+            userRoleSection.classList.add('hidden');
+            userTypeSection.classList.remove('hidden');
+        });
+
+        backToUserTypeFromAdmin.addEventListener('click', () => {
+            adminRoleSection.classList.add('hidden');
+            userTypeSection.classList.remove('hidden');
+        });
+
+        backToRoleSelection.addEventListener('click', () => {
+            registrationSection.classList.add('hidden');
+            if (userRoleInput.value === 'Student' || userRoleInput.value === 'Staff') {
+                userRoleSection.classList.remove('hidden');
+            } else {
+                adminRoleSection.classList.remove('hidden');
+            }
+        });
+
+        // Form submissions
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+
+            // Here you would typically send the login data to a server
+            console.log('Login attempted with:', { email, password });
+            alert('Login successful! (This is a demo)');
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('userRole').value;
+
+            // Here you would typically send the registration data to a server
+            console.log('Registration data:', { name, email, password, role });
+            
+            // Simulate successful registration
+            alert('Registration successful! Redirecting...');
+            
+            // Redirect based on user role
+            if (role === 'Student' || role === 'Staff') {
+                // Redirect to regular user dashboard
+                window.location.href = 'index.html';
+            } else if (role === 'HOD' || role === 'HeadAdmin') {
+                // Redirect to admin dashboard
+                window.location.href = 'hod.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

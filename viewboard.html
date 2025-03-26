@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Details | CollegeCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .priority-high { background-color: #fecaca; }
+        .priority-medium { background-color: #fed7aa; }
+        .priority-low { background-color: #bbf7d0; }
+        .status-pending { background-color: #bfdbfe; }
+        .status-accepted { background-color: #bbf7d0; }
+        .status-rejected { background-color: #fecaca; }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-300 w-full max-w-4xl">
+        <!-- Header with back button -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Issue Details</h1>
+            <a href="hod.html" class="text-blue-500 hover:underline flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Issue Details Section -->
+        <div id="issue-details">
+            <!-- This will be populated by JavaScript -->
+            <div class="text-center py-8 text-gray-500">Loading issue details...</div>
+        </div>
+
+        <!-- Action Buttons (for HOD) -->
+        <div id="action-buttons" class="flex justify-between mt-8 hidden">
+            <button id="reject-btn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
+                <i class="fas fa-times-circle mr-2"></i> Reject
+            </button>
+            <button id="accept-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
+                <i class="fas fa-check-circle mr-2"></i> Accept
+            </button>
+            <button id="forward-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg flex items-center">
+                <i class="fas fa-share mr-2"></i> Forward to Head Admin
+            </button>
+        </div>
+
+        <!-- Comment Input (shown when taking action) -->
+        <div id="comment-section" class="mt-6 hidden">
+            <textarea id="comment-text" class="w-full border border-gray-300 rounded-lg p-4" rows="3" 
+                     placeholder="Add your comments here..."></textarea>
+            <div class="flex justify-end mt-2">
+                <button id="cancel-comment" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg mr-2">
+                    Cancel
+                </button>
+                <button id="submit-comment" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get issue ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const issueId = parseInt(urlParams.get('id'));
+            
+            // Get all issues from localStorage
+            const issues = JSON.parse(localStorage.getItem('collegeIssues')) || [];
+            const issue = issues.find(item => item.id === issueId);
+            
+            const issueDetails = document.getElementById('issue-details');
+            const actionButtons = document.getElementById('action-buttons');
+            
+            if (issue) {
+                // Format priority display
+                let priorityDisplay = '';
+                let priorityColor = 'bg-blue-500';
+                if (issue.priority === 'high') priorityColor = 'bg-red-500';
+                if (issue.priority === 'low') priorityColor = 'bg-green-500';
+                
+                // Format status display
+                let statusDisplay = '';
+                let statusColor = 'bg-gray-200';
+                if (issue.status === 'accepted') statusColor = 'bg-green-100 text-green-800';
+                if (issue.status === 'rejected') statusColor = 'bg-red-100 text-red-800';
+                
+                // Render issue details
+                issueDetails.innerHTML = `
+                    <div class="grid grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Issue Type</h2>
+                            <div class="border border-gray-300 rounded-full px-6 py-3 inline-block text-lg">
+                                ${issue.issue}
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Location</h2>
+                            <div class="border border-gray-300 rounded-full px-6 py-3 inline-block text-lg">
+                                ${issue.location}
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Time Reported</h2>
+                            <div class="border border-gray-300 rounded-full px-6 py-3 inline-block text-lg">
+                                ${issue.time}
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Date Reported</h2>
+                            <div class="border border-gray-300 rounded-full px-6 py-3 inline-block text-lg">
+                                ${issue.date}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Description</h2>
+                            <div class="border border-gray-300 rounded-lg p-4 h-48 overflow-y-auto">
+                                <p class="text-lg">${issue.description}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Proof</h2>
+                            <div class="border border-gray-300 rounded-lg p-4 h-48 flex items-center justify-center bg-gray-100">
+                                ${issue.image ? 
+                                    `<img src="${issue.image}" alt="Issue proof" class="max-h-full max-w-full">` : 
+                                    '<p class="text-gray-500">No image provided</p>'}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold mb-4">Priority & Status</h2>
+                        <div class="border border-gray-300 rounded-lg p-4">
+                            <div class="flex items-center mb-4">
+                                <span class="font-bold text-lg mr-4">Priority:</span>
+                                <div class="w-6 h-6 rounded-full ${priorityColor} mr-2"></div>
+                                <span class="capitalize">${issue.priority || 'medium'}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-bold text-lg mr-4">Status:</span>
+                                <span class="px-3 py-1 rounded-full ${statusColor} capitalize">
+                                    ${issue.status || 'pending'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Show action buttons if status is pending
+                if (!issue.status || issue.status === 'pending') {
+                    actionButtons.classList.remove('hidden');
+                    setupActionButtons(issueId);
+                }
+            } else {
+                issueDetails.innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p class="text-xl">Issue not found!</p>
+                    </div>
+                `;
+            }
+        });
+        
+        function setupActionButtons(issueId) {
+            const rejectBtn = document.getElementById('reject-btn');
+            const acceptBtn = document.getElementById('accept-btn');
+            const forwardBtn = document.getElementById('forward-btn');
+            const commentSection = document.getElementById('comment-section');
+            const cancelComment = document.getElementById('cancel-comment');
+            const submitComment = document.getElementById('submit-comment');
+            
+            let currentAction = '';
+            
+            // Show comment section for action
+            [rejectBtn, acceptBtn, forwardBtn].forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentAction = btn.id.replace('-btn', '');
+                    actionButtons.classList.add('hidden');
+                    commentSection.classList.remove('hidden');
+                    document.getElementById('comment-text').focus();
+                });
+            });
+            
+            // Cancel comment
+            cancelComment.addEventListener('click', () => {
+                commentSection.classList.add('hidden');
+                actionButtons.classList.remove('hidden');
+                document.getElementById('comment-text').value = '';
+            });
+            
+            // Submit comment/action
+            submitComment.addEventListener('click', () => {
+                const comment = document.getElementById('comment-text').value.trim();
+                if (!comment && currentAction !== 'forward') {
+                    alert('Please enter a comment');
+                    return;
+                }
+                
+                // Update issue in localStorage
+                const issues = JSON.parse(localStorage.getItem('collegeIssues')) || [];
+                const issueIndex = issues.findIndex(item => item.id === issueId);
+                
+                if (issueIndex !== -1) {
+                    // Update status based on action
+                    if (currentAction === 'reject') {
+                        issues[issueIndex].status = 'rejected';
+                    } else if (currentAction === 'accept') {
+                        issues[issueIndex].status = 'accepted';
+                    } else if (currentAction === 'forward') {
+                        issues[issueIndex].status = 'forwarded to head admin';
+                    }
+                    
+                    // Add comment if provided
+                    if (comment) {
+                        if (!issues[issueIndex].comments) {
+                            issues[issueIndex].comments = [];
+                        }
+                        issues[issueIndex].comments.push({
+                            action: currentAction,
+                            text: comment,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    // Save back to localStorage
+                    localStorage.setItem('collegeIssues', JSON.stringify(issues));
+                    
+                    // Show confirmation and redirect
+                    alert(`Issue has been ${currentAction}ed successfully!`);
+                    window.location.href = 'hod.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
